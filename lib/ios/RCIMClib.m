@@ -1739,8 +1739,8 @@ RCT_EXPORT_METHOD(getCurrentUserId
     RCHQVoiceMessage *message = (RCHQVoiceMessage *)content;
     return @{
       @"objectName" : @"RC:HQVCMsg",
-      @"local" : message.localPath,
-      @"remote" : message.remoteUrl,
+      @"local" : message.localPath ? message.localPath : @"",
+      @"remote" : message.remoteUrl? message.remoteUrl : @"",
       @"duration" : @(message.duration),
       @"extra" : message.extra ? message.extra : @"",
     };

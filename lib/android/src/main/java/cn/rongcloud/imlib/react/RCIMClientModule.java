@@ -1,5 +1,7 @@
 package cn.rongcloud.imlib.react;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter;
 import io.rong.imlib.CustomServiceConfig;
@@ -23,6 +25,8 @@ import io.rong.imlib.model.Message.SentStatus;
 import io.rong.imlib.typingmessage.TypingStatus;
 import io.rong.message.MediaMessageContent;
 import io.rong.message.RecallNotificationMessage;
+import io.rong.push.RongPushClient;
+import io.rong.push.pushconfig.PushConfig;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -133,9 +137,43 @@ public class RCIMClientModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String key) {
+    public void init(ReadableMap config) {
         eventEmitter = reactContext.getJSModule(RCTDeviceEventEmitter.class);
         RCPushReceiver.eventEmitter = eventEmitter;
+
+        String key = getStringFromMap(config, "appKey");
+   
+        PushConfig.Builder pushConfigBuilder = new PushConfig.Builder();
+        String miAppId = getStringFromMap(config, "miAppId");
+        String miAppKey = getStringFromMap(config, "miAppKey");
+        String meizuAppId = getStringFromMap(config, "meizuAppId");
+        String meizuAppKey = getStringFromMap(config, "meizuAppKey");
+        String oppoAppKey = getStringFromMap(config, "oppoAppKey");
+        String oppoAppSecret = getStringFromMap(config, "oppoAppSecret");
+        Boolean enableHW = config.hasKey("enableHuawei") ? true : false;
+        Boolean enableVivo = config.hasKey("enableVivo") ? true : false;
+
+        if(miAppId != null) {
+            pushConfigBuilder.enableMiPush(miAppId, miAppKey);
+        }
+        if(meizuAppId != null) {
+            pushConfigBuilder.enableMeiZuPush(meizuAppId, meizuAppKey);
+        }
+
+        if(oppoAppKey != null) {
+            pushConfigBuilder.enableOppoPush(oppoAppKey, oppoAppSecret);
+        }
+
+        if(enableHW) {
+            pushConfigBuilder.enableHWPush(true);
+        }
+
+        if(enableVivo) {
+            pushConfigBuilder.enableVivoPush(true);
+        }
+
+
+        RongPushClient.setPushConfig(pushConfigBuilder.build());
         RongIMClient.init(reactContext, key);
     }
 
@@ -266,8 +304,8 @@ public class RCIMClientModule extends ReactContextBaseJavaModule {
 
     private String getStringFromMap(ReadableMap map, String key) {
         String value = null;
-        if (map.hasKey("pushContent")) {
-            value = map.getString("pushContent");
+        if (map.hasKey(key)) {
+            value = map.getString(key);
         }
         return value;
     }

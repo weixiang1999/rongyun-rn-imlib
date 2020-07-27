@@ -174,7 +174,7 @@ public class RCIMClientModule extends ReactContextBaseJavaModule {
 
 
         RongPushClient.setPushConfig(pushConfigBuilder.build());
-        RongIMClient.init(reactContext, key);
+        RongIMClient.init(getCurrentActivity().getApplication(), key);
     }
 
     @ReactMethod

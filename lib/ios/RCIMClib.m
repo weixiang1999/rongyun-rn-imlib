@@ -1704,9 +1704,9 @@ RCT_EXPORT_METHOD(getCurrentUserId
       @"operation" : message.operation,
       @"extra" : message.extra ? message.extra : @""
     };
-  } else if ([content isKindOfClass:[RCCommandNotificationMessage class]]) {
-    RCCommandNotificationMessage *message = (RCCommandNotificationMessage *)content;
-    return @{@"objectName" : @"RC:CmdNtf", @"name" : message.name, @"data" : message.data};
+  } else if ([content isKindOfClass:[RCCommandMessage class]]) {
+    RCCommandMessage *message = (RCCommandMessage *)content;
+    return @{@"objectName" : @"RC:CmdMsg", @"data" : message.data};
   } else if ([content isKindOfClass:[RCProfileNotificationMessage class]]) {
     RCProfileNotificationMessage *message = (RCProfileNotificationMessage *)content;
     return @{
